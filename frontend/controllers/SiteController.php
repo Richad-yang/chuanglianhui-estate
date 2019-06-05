@@ -1,8 +1,6 @@
 <?php
 namespace frontend\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
@@ -20,6 +18,8 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    public $ignoreList = [];
+    
     /**
      * {@inheritdoc}
      */
@@ -57,9 +57,9 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
+//             'error' => [
+//                 'class' => 'yii\web\ErrorAction',
+//             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
@@ -67,6 +67,26 @@ class SiteController extends Controller
         ];
     }
 
+    
+    
+    public function beforeAction($action)
+    {
+        // 如果未登录，请先登录
+        if(Yii::$app->user->isGuest){
+            return $this->redirect(['login/index']);
+        }
+        
+        // 获取路径
+        $path = Yii::$app->request->pathInfo;
+        
+        //忽略列表
+        if (in_array($path, $this->ignoreList)) {
+            return true;
+        }
+        
+        return parent::beforeAction($action);
+    }
+    
     /**
      * Displays homepage.
      *
@@ -75,29 +95,6 @@ class SiteController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
-    }
-
-    /**
-     * Logs in a user.
-     *
-     * @return mixed
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            $model->password = '';
-
-            return $this->render('login', [
-                'model' => $model,
-            ]);
-        }
     }
 
     /**
@@ -153,13 +150,16 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
-        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
         }
 
         return $this->render('signup', [
-            'model' => $model,
+                'model' => $model,
         ]);
     }
 
@@ -256,5 +256,17 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+    
+    /**
+     * error Action
+     *
+     * @return mixed
+     */
+    public function actionError()
+    {
+        $this->layout = 'login.php';
+        
+        return $this->render('error');
     }
 }

@@ -21,12 +21,13 @@ LoginAsset::register($this);
 </head>
 <body>
 <?php $this->beginBody() ?>
+<div class="header">
+    <img class="logo" src="../static/images/site-element/logo.png"></img>
+    <img class="title" src="../static/images/site-element/title.png"></img>
+</div>
 
-<div class="wrap">
-
-    <div class="container">
-        <?= $content ?>
-    </div>
+<div class="login-form">
+    <?= $content ?>
 </div>
 
 <?php $this->endBody() ?>

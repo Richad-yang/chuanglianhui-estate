@@ -1,8 +1,50 @@
 html,
-body {
-    height: 100%;
-    background-color: #8a8888;
+body {    
+    background: url(../images/site-element/login_bg.png) no-repeat;
+    background-color: #07050a;
+    background-size: cover;
+    color:#fff;
+}
+.header{
+    width: 100%;
+    height: 155px;
+    padding: 40px 0 0 40px;
+}
+
+.title {
+    margin-left: 190px;
+}
+.login-form {
+    width:100%;
+    text-align: center;
 }
 .site-login {
-    color:blue;
+    width:420px;
+    height:420px;
+    background: url(../images/site-element/login_frame.png) no-repeat;
+    padding: 125px 80px;
+    margin: 70px auto 0;
+}
+.form-group {
+    margin-bottom: 0;
+}
+.login-label {
+    font-size: 25px;
+    font-family: "楷体";
+}
+.form-control {
+    height:40px;
+}
+.submit {
+    margin-top: 20px;
+}
+.submit-button {
+    width:100%;
+    height:40px;
+    background-color: #2dc86a;
+    border: 0;
+    font-size: 25px;
+    font-family: 楷体;
+    color: #000000;
+    font-weight: bold;
 }

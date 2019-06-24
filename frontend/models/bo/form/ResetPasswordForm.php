@@ -1,5 +1,5 @@
 <?php
-namespace frontend\models;
+namespace frontend\models\bo\form;
 
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
